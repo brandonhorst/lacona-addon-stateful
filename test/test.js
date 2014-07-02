@@ -1,36 +1,11 @@
-var _ = require('lodash'),
-	chai = require('chai'),
-	expect = chai.expect,
-	lacona = require('lacona'),
-	sinon = require('sinon'),
-	stateful = require('../lib/stateful'),
-	schema;
+var chai = require('chai');
+var expect = chai.expectl
+var lacona = require('lacona');
+var sinon = require('sinon');
+var stateful = require('../lib/stateful');
+var schema;
 
 chai.use(require('sinon-chai'));
-
-// omitPrivate = function (value, key) {
-// 	return key[0] === '_';
-// };
-
-
-// makeOption = function (match, suggestion, completion) {
-// 	var map, option;
-
-// 	map = function (words) {
-// 		return _.map(match, function (string) {
-// 			return {string: string};
-// 		});
-// 	}
-
-// 	option = {
-// 		match: map(match),
-// 		suggestion: {
-// 			words: map(suggestion)
-// 		},
-// 		completion: map(completion)
-// 	};
-// 	return option
-// };
 
 schema = {
 	root: 'test',
@@ -57,7 +32,7 @@ describe('lacona-stateful', function () {
 		.understand(schema)
 		.on('insert', handleInsert)
 		.on('update', handleUpdate)
-		.parse('t')
+		.parse('t');
 
 		expect(handleInsert).to.have.been.called.once;
 		expect(handleUpdate).to.not.have.been.called;
@@ -77,7 +52,7 @@ describe('lacona-stateful', function () {
 		.on('insert', handleInsert)
 		.on('update', handleUpdate)
 		.parse('t')
-		.parse('te')
+		.parse('te');
 
 		expect(handleInsert).to.have.been.called.once;
 		expect(handleUpdate).to.have.been.called.once;
@@ -96,7 +71,7 @@ describe('lacona-stateful', function () {
 		.on('insert', handleInsert)
 		.on('delete', handleDelete)
 		.parse('t')
-		.parse('tx')
+		.parse('tx');
 
 		expect(handleInsert).to.have.been.called.once;
 		expect(handleDelete).to.have.been.called.once;
