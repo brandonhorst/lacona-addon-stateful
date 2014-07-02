@@ -1,0 +1,35 @@
+{
+  "name": "lacona-stateful",
+  "version": "0.0.1",
+  "description": "Add statefulness to the Lacona parser",
+  "main": "lib/stateful.js",
+  "scripts": {
+    "test": "mocha test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/brandonhorst/lacona-stateful.git"
+  },
+  "keywords": [
+    "laconic",
+    "ui",
+    "state",
+    "automatic"
+  ],
+  "author": "@brandonhorst",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/brandonhorst/lacona-stateful/issues"
+  },
+  "homepage": "https://github.com/brandonhorst/lacona-stateful",
+  "dependencies": {
+    "events-intercept": "*",
+    "lodash": "^2.4.1"
+  },
+  "devDependencies": {
+    "chai": "^1.9.1",
+    "mocha": "^1.20.1",
+    "sinon": "^1.10.2",
+    "sinon-chai": "^2.5.0"
+  }
+}
