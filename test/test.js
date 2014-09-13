@@ -1,16 +1,17 @@
 var chai = require('chai');
-var expect = chai.expectl
+var expect = chai.expect;
 var lacona = require('lacona');
 var sinon = require('sinon');
 var stateful = require('../lib/stateful');
-var schema;
+var schema = {
+	phrases: [{
+		name: 'test',
+		root: 'test'
+	}]
+};
 
 chai.use(require('sinon-chai'));
 
-schema = {
-	root: 'test',
-	run: ''
-};
 
 
 describe('lacona-stateful', function () {
@@ -18,6 +19,7 @@ describe('lacona-stateful', function () {
 
 	beforeEach(function () {
 		parser = new lacona.Parser();
+		parser.sentences = ['test']
 		stateful(parser);
 	});
 
@@ -34,7 +36,7 @@ describe('lacona-stateful', function () {
 		.on('update', handleUpdate)
 		.parse('t');
 
-		expect(handleInsert).to.have.been.called.once;
+		expect(handleInsert).to.have.been.calledOnce;
 		expect(handleUpdate).to.not.have.been.called;
 	});
 
@@ -54,8 +56,8 @@ describe('lacona-stateful', function () {
 		.parse('t')
 		.parse('te');
 
-		expect(handleInsert).to.have.been.called.once;
-		expect(handleUpdate).to.have.been.called.once;
+		expect(handleInsert).to.have.been.calledOnce;
+		expect(handleUpdate).to.have.been.calledOnce;
 		expect(handleInsert.firstCall.args[0]).to.equal(handleUpdate.firstCall.args[0]);
 	});
 
@@ -73,8 +75,8 @@ describe('lacona-stateful', function () {
 		.parse('t')
 		.parse('tx');
 
-		expect(handleInsert).to.have.been.called.once;
-		expect(handleDelete).to.have.been.called.once;
+		expect(handleInsert).to.have.been.calledOnce;
+		expect(handleDelete).to.have.been.calledOnce;
 		expect(handleInsert.firstCall.args[0]).to.equal(handleDelete.firstCall.args[0]);
 	});
 
