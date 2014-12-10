@@ -4,7 +4,10 @@
   "description": "Add statefulness to the Lacona parser",
   "main": "lib/stateful.js",
   "scripts": {
-    "test": "mocha test"
+    "test": "mocha test",
+    "lint": "npm run lint:lib && npm run lint:test",
+    "lint:lib": "jshint --config node_modules/lacona-util-jshint/lib.json lib",
+    "lint:test": "jshint --config node_modules/lacona-util-jshint/test.json test"
   },
   "repository": {
     "type": "git",
@@ -26,6 +29,7 @@
     "chai": "^1.9.1",
     "jshint": "^2.5.10",
     "lacona": "^0.8.0",
+    "lacona-util-jshint": "^0.1.0",
     "mocha": "^2.0.1",
     "sinon": "^1.10.2",
     "sinon-chai": "^2.5.0"
