@@ -2,7 +2,7 @@ var chai = require('chai');
 var expect = chai.expect;
 var lacona = require('lacona');
 var sinon = require('sinon');
-var stateful = require('../lib/stateful');
+var StatefulParser = require('../lib/stateful');
 var schema = {
 	phrases: [{
 		name: 'test',
@@ -15,12 +15,11 @@ chai.use(require('sinon-chai'));
 
 
 describe('lacona-stateful', function () {
-	var parser;
+	var parser, statefulParser;
 
 	beforeEach(function () {
-		parser = new lacona.Parser();
-		parser.sentences = ['test']
-		stateful(parser);
+		parser = new lacona.Parser({sentences: ['test']});
+		statefulParser = new StatefulParser(parser);
 	});
 
 	it('emits insert for first occurrence of data' , function () {
@@ -30,11 +29,12 @@ describe('lacona-stateful', function () {
 
 		var handleUpdate = sinon.spy();
 
-		parser
-		.understand(schema)
-		.on('insert', handleInsert)
-		.on('update', handleUpdate)
-		.parse('t');
+		parser.understand(schema);
+
+		statefulParser
+			.on('insert', handleInsert)
+			.on('update', handleUpdate)
+			.parse('t');
 
 		expect(handleInsert).to.have.been.calledOnce;
 		expect(handleUpdate).to.not.have.been.called;
@@ -49,12 +49,13 @@ describe('lacona-stateful', function () {
 			expect(data.suggestion.words[0].string).to.equal('test');
 		});
 
-		parser
-		.understand(schema)
-		.on('insert', handleInsert)
-		.on('update', handleUpdate)
-		.parse('t')
-		.parse('te');
+		parser.understand(schema);
+
+		statefulParser
+			.on('insert', handleInsert)
+			.on('update', handleUpdate)
+			.parse('t')
+			.parse('te');
 
 		expect(handleInsert).to.have.been.calledOnce;
 		expect(handleUpdate).to.have.been.calledOnce;
@@ -68,12 +69,13 @@ describe('lacona-stateful', function () {
 
 		var handleDelete = sinon.spy();
 
-		parser
-		.understand(schema)
-		.on('insert', handleInsert)
-		.on('delete', handleDelete)
-		.parse('t')
-		.parse('tx');
+		parser.understand(schema);
+
+		statefulParser
+			.on('insert', handleInsert)
+			.on('delete', handleDelete)
+			.parse('t')
+			.parse('tx');
 
 		expect(handleInsert).to.have.been.calledOnce;
 		expect(handleDelete).to.have.been.calledOnce;

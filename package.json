@@ -22,14 +22,16 @@
     "url": "https://github.com/brandonhorst/lacona-stateful/issues"
   },
   "homepage": "https://github.com/brandonhorst/lacona-stateful",
-  "dependencies": {
-    "events-intercept": "^1.1.0"
-  },
   "devDependencies": {
     "chai": "^1.9.1",
+    "jshint": "^2.5.10",
     "lacona": "^0.8.0",
     "mocha": "^2.0.1",
     "sinon": "^1.10.2",
     "sinon-chai": "^2.5.0"
+  },
+  "dependencies": {
+    "inherits": "^2.0.1",
+    "lacona": "^0.8.2"
   }
 }
