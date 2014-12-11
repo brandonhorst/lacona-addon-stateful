@@ -1,35 +1,38 @@
 lacona-stateful
 ================
 
-This library works with the [lacona parser](https://github.com/brandonhorst/lacona).
+This library works with the [lacona](https://github.com/brandonhorst/lacona) parser.
 
-Typically, the parser works much like a typical node stream, emitting 3 events: `data`, `end`, and `error`. Each parse is completely independent of all other parses.
+Typically, the parser works much like a typical node readable stream, emitting 3 events: `data`, `end`, and `error`. Each parse is completely independent of all other parses.
 
-However, for GUIs, it may be useful to keep track of state between parses, to correctly interpret keystrokes or handle animations, and more.
+However, for GUIs, it may be useful to keep track of state between parses, to correctly interpret keystrokes, handle animations, and more.
 
 This module implements this stateful behavior.
 
-##Usage
+##Example
 
-	var lacona = require('lacona'),
-		parser = new lacona.Parser(),
-		stateful = require('lacona-stateful');
+	var lacona = require('lacona');
+	var StatefulParser = require('lacona-addon-stateful');
 
-	stateful(parser);
+	var parser = new lacona.Parser();
+	//configure the parser if need be
 
-This makes use of [`events-intercept`](https://github.com/brandonhorst/events-intercept), hijacking the standard events and calling the following instead:
+	var statefulParser = new StatefulParser(parser);
+
+##Docs
+
+StatefulParser is an EventEmitter that can emit four events:
 
 * `insert` is called when a new `OutputOption` is available
 * `update` is called when a previously `insert`ed `OutputOption` should be replaced
 * `delete` is called when a previously `insert`ed `OutputOption` should be removed
+* `error` is called when the parser reports an error. Even if this happens, you can still trust the other 3 events.
 
 `insert` and `update` are passed a `Number` id and an `OutputOption` representing the new option.
 
 `delete` is just passed the `Number` id.
 
-If an error happened at any point, `error` will be emitted and passed an `Error`. If this happens, the state will be reset and all events for the next parse will be `insert`s.
-
-Automatic mode is useful for interactive parsing sessions. Because inserts, updates, and deletes are provided independently, order can be maintained between requests and interfaces can be managed properly.
+StatefulParser is useful for interactive parsing sessions. Because inserts, updates, and deletes are provided independently, order can be maintained between requests and interfaces can be managed properly.
 
 ##Development
 
