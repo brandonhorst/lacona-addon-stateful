@@ -7,7 +7,10 @@
     "test": "mocha test",
     "lint": "npm run lint:lib && npm run lint:test",
     "lint:lib": "jshint --config node_modules/lacona-util-jshint/lib.json lib",
-    "lint:test": "jshint --config node_modules/lacona-util-jshint/test.json test"
+    "lint:test": "jshint --config node_modules/lacona-util-jshint/test.json test",
+    "validate": "npm run lint && npm run test",
+    "cover": "istanbul cover _mocha test -- -R dot && istanbul report text",
+    "coveralls": "istanbul cover _mocha test --report lcovonly -- -R dot && cat coverage/lcov.info | coveralls && rimraf ./coverage"
   },
   "repository": {
     "type": "git",
