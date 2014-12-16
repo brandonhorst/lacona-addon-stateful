@@ -1,5 +1,8 @@
-lacona-stateful
+lacona-addon-stateful
 ================
+
+[![Build Status](https://travis-ci.org/lacona/lacona-addon-stateful.svg)](https://travis-ci.org/lacona/lacona-addon-stateful)
+[![Coverage Status](https://img.shields.io/coveralls/lacona/lacona-addon-stateful.svg)](https://coveralls.io/r/lacona/lacona-addon-stateful)
 
 This library works with the [lacona](https://github.com/brandonhorst/lacona) parser.
 
