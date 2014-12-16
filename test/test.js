@@ -12,8 +12,6 @@ var schema = {
 
 chai.use(require('sinon-chai'));
 
-
-
 describe('lacona-stateful', function () {
 	var parser, statefulParser;
 
@@ -82,5 +80,14 @@ describe('lacona-stateful', function () {
 		expect(handleInsert.firstCall.args[0]).to.equal(handleDelete.firstCall.args[0]);
 	});
 
+	it('emits error for errors', function(done) {
+		var handleError = sinon.spy(function (err) {
+			expect(err).to.be.an.instanceof(lacona.Error);
+			done();
+		});
 
+		statefulParser
+			.on('error', handleError)
+			.parse(123);
+	});
 });
