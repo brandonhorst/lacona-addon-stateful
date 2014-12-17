@@ -40,6 +40,7 @@
     "sinon-chai": "^2.5.0"
   },
   "dependencies": {
-    "inherits": "^2.0.1"
+    "inherits": "^2.0.1",
+    "lacona-util-fulltext": "0.0.1"
   }
 }
