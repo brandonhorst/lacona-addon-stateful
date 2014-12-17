@@ -1,8 +1,9 @@
 lacona-addon-stateful
 ================
 
-[![Build Status](https://travis-ci.org/lacona/lacona-addon-stateful.svg)](https://travis-ci.org/lacona/lacona-addon-stateful)
-[![Coverage Status](https://img.shields.io/coveralls/lacona/lacona-addon-stateful.svg)](https://coveralls.io/r/lacona/lacona-addon-stateful)
+[![Build Status](https://img.shields.io/travis/lacona/lacona-addon-stateful.svg?style=flat)](https://travis-ci.org/lacona/lacona-addon-stateful)
+[![Coverage Status](https://img.shields.io/coveralls/lacona/lacona-addon-stateful.svg?style=flat)](https://coveralls.io/r/lacona/lacona-addon-stateful)
+[![npm](http://img.shields.io/npm/v/lacona-addon-stateful.svg?style=flat)]()
 
 This library works with the [lacona](https://github.com/brandonhorst/lacona) parser.
 
@@ -26,10 +27,12 @@ This module implements this stateful behavior.
 
 StatefulParser is an EventEmitter that can emit four events:
 
+* `start` is called when a parse is started
 * `insert` is called when a new `OutputOption` is available
 * `update` is called when a previously `insert`ed `OutputOption` should be replaced
 * `delete` is called when a previously `insert`ed `OutputOption` should be removed
-* `error` is called when the parser reports an error. Even if this happens, you can still trust the other 3 events.
+* `end` is called when a parse completes
+* `error` is called when the parser reports an error. Even if this happens, you can still trust the other `insert`, `update`, and `delete`
 
 `insert` and `update` are passed a `Number` id and an `OutputOption` representing the new option.
 

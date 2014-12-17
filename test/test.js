@@ -90,4 +90,18 @@ describe('lacona-stateful', function () {
 			.on('error', handleError)
 			.parse(123);
 	});
+
+	it('emits start and end', function(done) {
+		var handleStart = sinon.spy();
+
+		function handleEnd() {
+			expect(handleStart).to.have.been.called;
+			done();
+		}
+
+		statefulParser
+			.on('start', handleStart)
+			.on('end', handleEnd)
+			.parse('test');
+	});
 });
