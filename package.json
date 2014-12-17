@@ -1,6 +1,6 @@
 {
   "name": "lacona-addon-stateful",
-  "version": "0.2.2",
+  "version": "0.3.0",
   "description": "Add statefulness to the Lacona parser",
   "main": "lib/stateful.js",
   "scripts": {
