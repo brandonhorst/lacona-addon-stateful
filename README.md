@@ -7,39 +7,38 @@ lacona-addon-stateful
 
 This library works with the [lacona](https://github.com/brandonhorst/lacona) parser.
 
-Typically, the parser works much like a typical node readable stream, emitting 3 events: `data`, `end`, and `error`. Each parse is completely independent of all other parses.
+Typically, the lacona parser simply emits data for each parse as quickly as possible. Each parse is completely independent of all other parses.
 
 However, for GUIs, it may be useful to keep track of state between parses, to correctly interpret keystrokes, handle animations, and more.
 
-This module implements this stateful behavior.
+This module implements this stateful behavior, by means of a `Transform` stream.
 
 ##Example
 
 	var lacona = require('lacona');
-	var StatefulParser = require('lacona-addon-stateful');
+	var Stateful = require('lacona-addon-stateful');
 
 	var parser = new lacona.Parser();
 	//configure the parser if need be
 
-	var statefulParser = new StatefulParser(parser);
+	var stateful = new Stateful(parser);
 
 ##Docs
 
-StatefulParser is an EventEmitter that can emit four events:
+StatefulParser is an `Transform` stream that should be piped the output of `lacona.Parser`. It emits objects in the form
 
-* `start` is called when a parse is started
-* `insert` is called when a new `OutputOption` is available
-* `update` is called when a previously `insert`ed `OutputOption` should be replaced
-* `delete` is called when a previously `insert`ed `OutputOption` should be removed
-* `end` is called when a parse completes
-* `error` is called when the parser reports an error. Even if this happens, you can still trust the other `insert`, `update`, and `delete`
+```js
+{
+	id: id,
+	event: eventName,
+	data: data
+}
+```
 
-`insert` and `update` are passed a `Number` id and an `OutputOption` representing the new option.
-
-`delete` is just passed the `Number` id.
+Where `event` will be either `'insert'`, `'update'`, or `'delete'`. For `'insert'` and `'update'`, an `OutputOption` will be provided as the `data` property.
 
 StatefulParser is useful for interactive parsing sessions. Because inserts, updates, and deletes are provided independently, order can be maintained between requests and interfaces can be managed properly.
 
 ##Development
 
-While a separate package, lacona-stateful is a fundamental component of the [lacona](https://github.com/brandonhorst/lacona) framework, and will be supported in the same way.
+While a separate package, lacona-stateful is a fundamental component of the [lacona](https://github.com/lacona/lacona) framework, and will be supported in the same way.

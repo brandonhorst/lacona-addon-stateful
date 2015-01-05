@@ -1,107 +1,94 @@
 var chai = require('chai');
-var expect = chai.expect;
+var stream = require('stream');
+
 var lacona = require('lacona');
-var sinon = require('sinon');
-var StatefulParser = require('../lib/stateful');
-var schema = {
+var Stateful = require('../lib/stateful');
+
+var expect = chai.expect;
+
+var grammar = {
 	phrases: [{
 		name: 'test',
 		root: 'test'
 	}]
 };
 
-chai.use(require('sinon-chai'));
+function toStream(strings) {
+	var newStream = new stream.Readable({objectMode: true});
+
+	strings.forEach(function (string) {
+		newStream.push(string);
+	});
+	newStream.push(null);
+
+	return newStream;
+}
+
+function toArray(done) {
+	var newStream = new stream.Writable({objectMode: true});
+	var list = [];
+	newStream.write = function(obj) {
+		list.push(obj);
+	};
+
+	newStream.end = function() {
+		done(list);
+	};
+
+	return newStream;
+}
 
 describe('lacona-stateful', function () {
-	var parser, statefulParser;
+	var parser, stateful;
 
 	beforeEach(function () {
-		parser = new lacona.Parser({sentences: ['test']});
-		statefulParser = new StatefulParser(parser);
+		parser = new lacona.Parser({sentences: ['test']}).understand(grammar);
+		stateful = new Stateful();
 	});
 
-	it('emits insert for first occurrence of data' , function () {
-		var handleInsert = sinon.spy(function (id, data) {
-			expect(data.suggestion.words[0].string).to.equal('test');
-		});
-
-		var handleUpdate = sinon.spy();
-
-		parser.understand(schema);
-
-		statefulParser
-			.on('insert', handleInsert)
-			.on('update', handleUpdate)
-			.parse('t');
-
-		expect(handleInsert).to.have.been.calledOnce;
-		expect(handleUpdate).to.not.have.been.called;
-	});
-
-	it('emits update for subsequent data with the same string' , function () {
-		var handleInsert = sinon.spy(function (id, data) {
-			expect(data.suggestion.words[0].string).to.equal('test');
-		});
-
-		var handleUpdate = sinon.spy(function (id, data) {
-			expect(data.suggestion.words[0].string).to.equal('test');
-		});
-
-		parser.understand(schema);
-
-		statefulParser
-			.on('insert', handleInsert)
-			.on('update', handleUpdate)
-			.parse('t')
-			.parse('te');
-
-		expect(handleInsert).to.have.been.calledOnce;
-		expect(handleUpdate).to.have.been.calledOnce;
-		expect(handleInsert.firstCall.args[0]).to.equal(handleUpdate.firstCall.args[0]);
-	});
-
-	it('emits delete when the parse is no longer valid' , function () {
-		var handleInsert = sinon.spy(function (id, data) {
-			expect(data.suggestion.words[0].string).to.equal('test');
-		});
-
-		var handleDelete = sinon.spy();
-
-		parser.understand(schema);
-
-		statefulParser
-			.on('insert', handleInsert)
-			.on('delete', handleDelete)
-			.parse('t')
-			.parse('tx');
-
-		expect(handleInsert).to.have.been.calledOnce;
-		expect(handleDelete).to.have.been.calledOnce;
-		expect(handleInsert.firstCall.args[0]).to.equal(handleDelete.firstCall.args[0]);
-	});
-
-	it('emits error for errors', function(done) {
-		var handleError = sinon.spy(function (err) {
-			expect(err).to.be.an.instanceof(lacona.Error);
-			done();
-		});
-
-		statefulParser
-			.on('error', handleError)
-			.parse(123);
-	});
-
-	it('emits start and end', function(done) {
-		var handleStart = sinon.spy();
-
-		function handleEnd() {
-			expect(handleStart).to.have.been.called;
+	it('emits insert for first occurrence of data' , function (done) {
+		function callback(data) {
+			expect(data).to.have.length(1);
+			expect(data[0].event).to.equal('insert');
+			expect(data[0].data.suggestion.words[0].string).to.equal('test');
 			done();
 		}
 
-		statefulParser
-			.on('start', handleStart)
-			.on('end', handleEnd)
-			.parse('test');
+		toStream(['t'])
+			.pipe(parser)
+			.pipe(stateful)
+			.pipe(toArray(callback));
 	});
+
+	it('does not emit multiple events if parsed before handling' , function (done) {
+		function callback(data) {
+			expect(data).to.have.length(2);
+			expect(data[0].event).to.equal('insert');
+			expect(data[1].event).to.equal('update');
+			expect(data[0].data.suggestion.words[0].string).to.equal('test');
+			expect(data[1].data.suggestion.words[0].string).to.equal('test');
+			done();
+		}
+
+		toStream(['t', 'te'])
+			.pipe(parser)
+			.pipe(stateful)
+			.pipe(toArray(callback));
+	});
+
+	it('does not emit events if none are valid' , function (done) {
+		function callback(data) {
+			expect(data).to.have.length(2);
+			expect(data[0].event).to.equal('insert');
+			expect(data[1].event).to.equal('delete');
+			expect(data[0].data.suggestion.words[0].string).to.equal('test');
+			done();
+		}
+
+		toStream(['t', 'tx'])
+			.pipe(parser)
+			.pipe(stateful)
+			.pipe(toArray(callback));
+	});
+
 });
