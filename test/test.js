@@ -2,6 +2,7 @@ var chai = require('chai');
 var stream = require('stream');
 
 var lacona = require('lacona');
+var fulltext = require('lacona-util-fulltext');
 var Stateful = require('..');
 
 var expect = chai.expect;
@@ -43,7 +44,7 @@ describe('lacona-addon-stateful', function () {
 
 	beforeEach(function () {
 		parser = new lacona.Parser({sentences: ['test']}).understand(grammar);
-		stateful = new Stateful();
+		stateful = new Stateful({serializer: fulltext});
 	});
 
 	it('emits insert for first occurrence of data' , function (done) {

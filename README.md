@@ -13,15 +13,25 @@ However, for GUIs, it may be useful to keep track of state between parses, to co
 
 This module implements this stateful behavior, by means of a `Transform` stream.
 
+Parse results are considered to be "the same" if the output of `serializer` is the same. `lacona-util-fulltext` is a simple function that serializes an OutputOption by concatenating its Match, Suggestion, and Completion.
+
 ##Example
 
-	var lacona = require('lacona');
-	var Stateful = require('lacona-addon-stateful');
+```js
+var lacona = require('lacona');
+var Stateful = require('lacona-addon-stateful');
+var fulltext = require('lacona-util-fulltext');
 
-	var parser = new lacona.Parser();
-	//configure the parser if need be
+var parser = new lacona.Parser();
+//configure the parser if need be
 
-	var stateful = new Stateful(parser);
+var stateful = new Stateful({serializer: fulltext});
+
+src
+	.pipe(parser)
+	.pipe(stateful)
+	.pipe(process.stdout);
+```
 
 ##Docs
 
@@ -38,7 +48,3 @@ StatefulParser is an `Transform` stream that should be piped the output of `laco
 Where `event` will be either `'insert'`, `'update'`, or `'delete'`. For `'insert'` and `'update'`, an `OutputOption` will be provided as the `data` property.
 
 StatefulParser is useful for interactive parsing sessions. Because inserts, updates, and deletes are provided independently, order can be maintained between requests and interfaces can be managed properly.
-
-##Development
-
-While a separate package, lacona-stateful is a fundamental component of the [lacona](https://github.com/lacona/lacona) framework, and will be supported in the same way.
