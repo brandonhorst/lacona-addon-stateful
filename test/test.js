@@ -2,7 +2,7 @@ var chai = require('chai');
 var stream = require('stream');
 
 var lacona = require('lacona');
-var Stateful = require('../lib/stateful');
+var Stateful = require('..');
 
 var expect = chai.expect;
 
@@ -38,7 +38,7 @@ function toArray(done) {
 	return newStream;
 }
 
-describe('lacona-stateful', function () {
+describe('lacona-addon-stateful', function () {
 	var parser, stateful;
 
 	beforeEach(function () {
