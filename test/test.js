@@ -37,14 +37,15 @@ describe('lacona-addon-stateful', function () {
 
 	describe('syncronous parse', function () {
 		beforeEach(function () {
-			var grammar = {
-				phrases: [{
-					name: 'test',
-					root: 'test'
-				}]
-			};
+			var test = lacona.createPhrase({
+				name: 'test/test',
+				describe: function () {
+					return lacona.literal({text: 'test'});
+				}
+			});
 
-			parser = new lacona.Parser({sentences: ['test']}).understand(grammar);
+			parser = new lacona.Parser();
+			parser.sentences = [test()];
 			stateful = new Stateful({serializer: fulltext});
 		});
 
@@ -98,25 +99,21 @@ describe('lacona-addon-stateful', function () {
 
 	describe('async parse', function () {
 		beforeEach(function () {
-			var grammar = {
-				scope: {
-					delay: function (input, data, done) {
-						setTimeout(function () {
-							data({display: 'test', value: 'test'});
-							done();
-						}, 0);
-					}
+			var test = lacona.createPhrase({
+				name: 'test/test',
+				delay: function (input, data, done) {
+					setTimeout(function () {
+						data({text: 'test', value: 'test'});
+						done();
+					}, 0);
 				},
-				phrases: [{
-					name: 'test',
-					root: {
-						type: 'value',
-						compute: 'delay'
-					}
-				}]
-			};
+				describe: function () {
+					return lacona.value({compute: this.delay});
+				}
+			});
 
-			parser = new lacona.Parser({sentences: ['test']}).understand(grammar);
+			parser = new lacona.Parser();
+			parser.sentences = [test()];
 			stateful = new Stateful({serializer: fulltext});
 		});
 
