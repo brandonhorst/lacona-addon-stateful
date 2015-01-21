@@ -46,14 +46,14 @@ describe('lacona-addon-stateful', function () {
 
 			parser = new lacona.Parser();
 			parser.sentences = [test()];
-			stateful = new Stateful({serializer: fulltext});
+			stateful = new Stateful({serializer: fulltext.all});
 		});
 
 		it('emits insert for first occurrence of data' , function (done) {
 			function callback(data) {
 				expect(data).to.have.length(1);
 				expect(data[0].event).to.equal('insert');
-				expect(data[0].data.suggestion.words[0].string).to.equal('test');
+				expect(fulltext.suggestion(data[0].data)).to.equal('test');
 				expect(data[0].id).to.equal(0);
 				done();
 			}
@@ -69,8 +69,8 @@ describe('lacona-addon-stateful', function () {
 				expect(data).to.have.length(2);
 				expect(data[0].event).to.equal('insert');
 				expect(data[1].event).to.equal('update');
-				expect(data[0].data.suggestion.words[0].string).to.equal('test');
-				expect(data[1].data.suggestion.words[0].string).to.equal('test');
+				expect(fulltext.suggestion(data[0].data)).to.equal('test');
+				expect(fulltext.suggestion(data[1].data)).to.equal('test');
 				expect(data[0].id).to.equal(data[1].id);
 				done();
 			}
@@ -86,7 +86,7 @@ describe('lacona-addon-stateful', function () {
 				expect(data).to.have.length(2);
 				expect(data[0].event).to.equal('insert');
 				expect(data[1].event).to.equal('delete');
-				expect(data[0].data.suggestion.words[0].string).to.equal('test');
+				expect(fulltext.suggestion(data[0].data)).to.equal('test');
 				done();
 			}
 
@@ -114,7 +114,7 @@ describe('lacona-addon-stateful', function () {
 
 			parser = new lacona.Parser();
 			parser.sentences = [test()];
-			stateful = new Stateful({serializer: fulltext});
+			stateful = new Stateful({serializer: fulltext.all});
 		});
 
 		it('does not emit anything if the most recent parse has no data', function (done) {
@@ -133,7 +133,7 @@ describe('lacona-addon-stateful', function () {
 			function callback(data) {
 				expect(data).to.have.length(1);
 				expect(data[0].event).to.equal('insert');
-				expect(data[0].data.suggestion.charactersComplete).to.equal(2);
+				expect(data[0].data.suggestion[0].string).to.equal('te');
 				done();
 			}
 
