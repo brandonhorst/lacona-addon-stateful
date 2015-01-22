@@ -66,12 +66,18 @@ describe('lacona-addon-stateful', function () {
 
 		it('emits an update if the input changes' , function (done) {
 			function callback(data) {
-				expect(data).to.have.length(2);
+				expect(data).to.have.length(3);
+
 				expect(data[0].event).to.equal('insert');
-				expect(data[1].event).to.equal('update');
+				expect(data[0].id).to.equal(0);
 				expect(fulltext.suggestion(data[0].data)).to.equal('test');
-				expect(fulltext.suggestion(data[1].data)).to.equal('test');
-				expect(data[0].id).to.equal(data[1].id);
+
+				expect(data[1].event).to.equal('delete');
+				expect(data[0].id).to.equal(0);
+
+				expect(data[2].event).to.equal('insert');
+				expect(data[2].id).to.equal(1);
+				expect(fulltext.suggestion(data[2].data)).to.equal('test');
 				done();
 			}
 
