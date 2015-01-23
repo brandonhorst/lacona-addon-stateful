@@ -52,9 +52,10 @@ describe('lacona-addon-stateful', function () {
 		it('emits insert for first occurrence of data' , function (done) {
 			function callback(data) {
 				expect(data).to.have.length(1);
+
 				expect(data[0].event).to.equal('insert');
 				expect(fulltext.suggestion(data[0].data)).to.equal('test');
-				expect(data[0].id).to.equal(0);
+
 				done();
 			}
 
@@ -69,15 +70,13 @@ describe('lacona-addon-stateful', function () {
 				expect(data).to.have.length(3);
 
 				expect(data[0].event).to.equal('insert');
-				expect(data[0].id).to.equal(0);
-				expect(fulltext.suggestion(data[0].data)).to.equal('test');
+				expect(fulltext.all(data[0].data)).to.equal('test');
 
 				expect(data[1].event).to.equal('delete');
-				expect(data[0].id).to.equal(0);
+				expect(data[1].id).to.equal(data[0].id);
 
 				expect(data[2].event).to.equal('insert');
-				expect(data[2].id).to.equal(1);
-				expect(fulltext.suggestion(data[2].data)).to.equal('test');
+				expect(fulltext.all(data[2].data)).to.equal('test');
 				done();
 			}
 
@@ -90,9 +89,14 @@ describe('lacona-addon-stateful', function () {
 		it('emits a delete if a valid option goes away' , function (done) {
 			function callback(data) {
 				expect(data).to.have.length(2);
+
 				expect(data[0].event).to.equal('insert');
+				expect(fulltext.all(data[0].data)).to.equal('test');
+
 				expect(data[1].event).to.equal('delete');
-				expect(fulltext.suggestion(data[0].data)).to.equal('test');
+				expect(data[1].id).to.equal(data[0].id);
+
+
 				done();
 			}
 
@@ -138,8 +142,10 @@ describe('lacona-addon-stateful', function () {
 		it('only emits one event for async if the second comes before the first completes', function (done) {
 			function callback(data) {
 				expect(data).to.have.length(1);
+
 				expect(data[0].event).to.equal('insert');
 				expect(data[0].data.suggestion[0].string).to.equal('te');
+
 				done();
 			}
 
