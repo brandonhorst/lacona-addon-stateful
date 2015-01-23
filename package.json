@@ -32,8 +32,8 @@
     "chai": "^1.10.0",
     "coveralls": "^2.11.2",
     "istanbul": "^0.3.5",
-    "jshint": "^2.5.11",
-    "lacona": "^0.15.0",
+    "jshint": "^2.6.0",
+    "lacona": "^0.15.2",
     "lacona-util-fulltext": "0.2.0",
     "lacona-util-jshint": "^0.2.0",
     "mocha": "^2.1.0"
