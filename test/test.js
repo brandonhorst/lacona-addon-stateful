@@ -2,6 +2,7 @@ var chai = require('chai');
 var stream = require('stream');
 
 var lacona = require('lacona');
+var phrase = require('lacona-phrase');
 var fulltext = require('lacona-util-fulltext');
 var Stateful = require('..');
 
@@ -37,15 +38,14 @@ describe('lacona-addon-stateful', function () {
 
 	describe('syncronous parse', function () {
 		beforeEach(function () {
-			var test = lacona.createPhrase({
-				name: 'test/test',
+			var Test = phrase.createPhrase({
 				describe: function () {
-					return lacona.literal({text: 'test'});
+					return phrase.literal({text: 'test'});
 				}
 			});
 
 			parser = new lacona.Parser();
-			parser.sentences = [test()];
+			parser.sentences = [phrase.createElement(Test)];
 			stateful = new Stateful({serializer: fulltext.all});
 		});
 
@@ -109,8 +109,7 @@ describe('lacona-addon-stateful', function () {
 
 	describe('async parse', function () {
 		beforeEach(function () {
-			var test = lacona.createPhrase({
-				name: 'test/test',
+			var Test = phrase.createPhrase({
 				delay: function (input, data, done) {
 					setTimeout(function () {
 						data({text: 'test', value: 'test'});
@@ -118,12 +117,12 @@ describe('lacona-addon-stateful', function () {
 					}, 0);
 				},
 				describe: function () {
-					return lacona.value({compute: this.delay});
+					return phrase.value({compute: this.delay});
 				}
 			});
 
 			parser = new lacona.Parser();
-			parser.sentences = [test()];
+			parser.sentences = [phrase.createElement(Test)];
 			stateful = new Stateful({serializer: fulltext.all});
 		});
 
