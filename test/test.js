@@ -1,5 +1,5 @@
 var chai = require('chai');
-var stream = require('stream');
+var es = require('event-stream');
 
 var lacona = require('lacona');
 var phrase = require('lacona-phrase');
@@ -7,31 +7,6 @@ var fulltext = require('lacona-util-fulltext');
 var Stateful = require('..');
 
 var expect = chai.expect;
-
-function toStream(strings) {
-	var newStream = new stream.Readable({objectMode: true});
-
-	strings.forEach(function (string) {
-		newStream.push(string);
-	});
-	newStream.push(null);
-
-	return newStream;
-}
-
-function toArray(done) {
-	var newStream = new stream.Writable({objectMode: true});
-	var list = [];
-	newStream.write = function(obj) {
-		list.push(obj);
-	};
-
-	newStream.end = function() {
-		done(list);
-	};
-
-	return newStream;
-}
 
 describe('lacona-addon-stateful', function () {
 	var parser, stateful;
@@ -50,7 +25,7 @@ describe('lacona-addon-stateful', function () {
 		});
 
 		it('emits insert for first occurrence of data' , function (done) {
-			function callback(data) {
+			function callback(err, data) {
 				expect(data).to.have.length(1);
 
 				expect(data[0].event).to.equal('insert');
@@ -59,14 +34,14 @@ describe('lacona-addon-stateful', function () {
 				done();
 			}
 
-			toStream(['t'])
+			es.readArray(['t'])
 				.pipe(parser)
 				.pipe(stateful)
-				.pipe(toArray(callback));
+				.pipe(es.writeArray(callback));
 		});
 
 		it('emits an update if the input changes' , function (done) {
-			function callback(data) {
+			function callback(err, data) {
 				expect(data).to.have.length(3);
 
 				expect(data[0].event).to.equal('insert');
@@ -80,14 +55,14 @@ describe('lacona-addon-stateful', function () {
 				done();
 			}
 
-			toStream(['t', 'te'])
+			es.readArray(['t', 'te'])
 				.pipe(parser)
 				.pipe(stateful)
-				.pipe(toArray(callback));
+				.pipe(es.writeArray(callback));
 		});
 
 		it('emits a delete if a valid option goes away' , function (done) {
-			function callback(data) {
+			function callback(err, data) {
 				expect(data).to.have.length(2);
 
 				expect(data[0].event).to.equal('insert');
@@ -100,10 +75,10 @@ describe('lacona-addon-stateful', function () {
 				done();
 			}
 
-			toStream(['t', 'tx'])
+			es.readArray(['t', 'tx'])
 				.pipe(parser)
 				.pipe(stateful)
-				.pipe(toArray(callback));
+				.pipe(es.writeArray(callback));
 		});
 	});
 
@@ -127,19 +102,19 @@ describe('lacona-addon-stateful', function () {
 		});
 
 		it('does not emit anything if the most recent parse has no data', function (done) {
-			function callback(data) {
+			function callback(err, data) {
 				expect(data).to.have.length(0);
 				done();
 			}
 
-			toStream(['t', 'tx'])
+			es.readArray(['t', 'tx'])
 				.pipe(parser)
 				.pipe(stateful)
-				.pipe(toArray(callback));
+				.pipe(es.writeArray(callback));
 		});
 
 		it('only emits one event for async if the second comes before the first completes', function (done) {
-			function callback(data) {
+			function callback(err, data) {
 				expect(data).to.have.length(1);
 
 				expect(data[0].event).to.equal('insert');
@@ -148,10 +123,10 @@ describe('lacona-addon-stateful', function () {
 				done();
 			}
 
-			toStream(['t', 'te'])
+			es.readArray(['t', 'te'])
 				.pipe(parser)
 				.pipe(stateful)
-				.pipe(toArray(callback));
+				.pipe(es.writeArray(callback));
 		});
 	});
 
